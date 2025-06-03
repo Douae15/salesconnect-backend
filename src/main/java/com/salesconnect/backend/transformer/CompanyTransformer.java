@@ -20,7 +20,6 @@ public class CompanyTransformer extends Transformer<Company, CompanyDTO>{
             company.setName(companyDTO.getName());
             company.setEmail(companyDTO.getEmail());
             company.setAddress(companyDTO.getAddress());
-            company.setPhone(companyDTO.getPhone());
             company.setIndustry(companyDTO.getIndustry());
             company.setUsers(userTransformer.toEntityList(companyDTO.getUsersDTO()));
             company.setContacts(contactTransformer.toEntityList(companyDTO.getContactsDTO()));
