@@ -16,8 +16,8 @@ public class UserTransformer extends Transformer<User, UserDTO>{
             Transformer<Task, TaskDTO> tasksTransformer = new TaskTransformer();
             User user = new User();
             user.setUserId(userDTO.getUserId());
-            user.setUsername(userDTO.getUsername());
-            user.setName(userDTO.getName());
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
             user.setEmail(userDTO.getEmail());
             user.setPhone(userDTO.getPhone());
             user.setRole(userDTO.getRole());
@@ -39,8 +39,7 @@ public class UserTransformer extends Transformer<User, UserDTO>{
             Transformer<Task, TaskDTO> tasksTransformer = new TaskTransformer();
             UserDTO userDTO = new UserDTO();
             userDTO.setUserId(user.getUserId());
-            userDTO.setUsername(user.getUsername());
-            userDTO.setName(user.getName());
+            userDTO.setFirstName(user.getLastName());
             userDTO.setEmail(user.getEmail());
             userDTO.setPhone(user.getPhone());
             userDTO.setRole(user.getRole());

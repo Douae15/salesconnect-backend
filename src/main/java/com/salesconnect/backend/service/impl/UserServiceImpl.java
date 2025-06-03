@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
         }
 */
         User newUser = User.builder()
-                .name(userDTO.getName())
-                .username(userDTO.getUsername())
+                .firstName(userDTO.getFirstName())
+                .lastName(userDTO.getLastName())
                 .email(userDTO.getEmail())
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .phone(userDTO.getPhone())
@@ -126,7 +126,8 @@ public class UserServiceImpl implements UserService {
         String password = userDTO.getPassword() != null ? passwordEncoder.encode(userDTO.getPassword()) : existingUser.getPassword();
 
         // Mettre à jour les autres informations
-        existingUser.setName(userDTO.getName());
+        existingUser.setFirstName(userDTO.getFirstName());
+        existingUser.setLastName(userDTO.getLastName());
         existingUser.setEmail(userDTO.getEmail());
         existingUser.setPhone(userDTO.getPhone());
         existingUser.setPassword(password);

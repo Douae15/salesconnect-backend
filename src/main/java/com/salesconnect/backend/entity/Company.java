@@ -27,6 +27,7 @@ public class Company extends AbstractEntity {
     private String phone;
     private String address;
     private String industry;
+    private String country;
 
     @OneToMany(mappedBy = "company")
     private List<User> users;

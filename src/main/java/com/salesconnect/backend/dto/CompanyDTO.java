@@ -21,6 +21,7 @@ public class CompanyDTO {
     private String phone;
     private String address;
     private String industry;
+    private String country;
     private List<UserDTO> usersDTO;
     private List<ContactDTO> contactsDTO;
 

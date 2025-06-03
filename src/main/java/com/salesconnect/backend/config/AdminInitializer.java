@@ -20,9 +20,9 @@ public class AdminInitializer implements CommandLineRunner {
         // Vérifier si un admin global existe déjà
         if (!userRepository.existsByRole(Role.ADMIN_GLOBAL)) {
             User globalAdmin = User.builder()
-                    .name("Super Admin")
+                    .firstName("Admin")
+                    .lastName("Global")
                     .email("admin@salesconnect.com")
-                    .username("AdminGlobal")
                     .password(passwordEncoder.encode("admin123"))
                     .role(Role.ADMIN_GLOBAL)
                     .build();

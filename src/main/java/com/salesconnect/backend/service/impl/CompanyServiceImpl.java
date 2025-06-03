@@ -67,10 +67,12 @@ public class CompanyServiceImpl implements CompanyService {
         // Créer l'entité Company
         Company company = Company.builder()
                 .name(companyDTO.getName())
+                .country(companyDTO.getCountry())
+                .address(companyDTO.getAddress())
                 .email(companyDTO.getEmail())
                 .phone(companyDTO.getPhone())
-                .address(companyDTO.getAddress())
                 .industry(companyDTO.getIndustry())
+                .country(companyDTO.getCountry())
                 .build();
 
         // Sauvegarder l'entreprise
@@ -84,7 +86,8 @@ public class CompanyServiceImpl implements CompanyService {
                 .orElseThrow(() -> new RuntimeException("Admin user is missing"));
 
         User admin = User.builder()
-                .name(adminDTO.getName())
+                .firstName(adminDTO.getFirstName())
+                .lastName(adminDTO.getLastName())
                 .email(adminDTO.getEmail())
                 .phone(adminDTO.getPhone())
                 .password(passwordEncoder.encode(adminDTO.getPassword())) // Encodage du mot de passe
@@ -99,9 +102,10 @@ public class CompanyServiceImpl implements CompanyService {
         CompanyDTO response = CompanyDTO.builder()
                 .companyId(company.getCompanyId())
                 .name(company.getName())
+                .country(company.getCountry())
+                .address(company.getAddress())
                 .email(company.getEmail())
                 .phone(company.getPhone())
-                .address(company.getAddress())
                 .industry(company.getIndustry())
                 .build();
 

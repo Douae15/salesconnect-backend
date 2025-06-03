@@ -35,43 +35,37 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest authenticationRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest authenticationRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getEmail(),
+                            authenticationRequest.getPassword()));
 
-    System.out.println("Tentative de login: " + authenticationRequest.getEmail());
-    // Authentification avec l'email et le mot de passe
-    Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getEmail(), 
-                    authenticationRequest.getPassword()
-            )
-    );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtTokenProvider.createToken(authentication);
 
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    String jwt = jwtTokenProvider.createToken(authentication);
+            User userDetails = (User) authentication.getPrincipal();
+            List<String> roles = authentication.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .toList();
 
-    // Récupérer les rôles
-    List<String> roles = authentication.getAuthorities()
-            .stream()
-            .map(item -> item.getAuthority())
-            .toList();
-
-    // Extraire les infos utilisateur
-    User userDetails = (User) authentication.getPrincipal();
-
-    return ResponseEntity.ok(new JwtResponse(
-            jwt,
-            "Bearer",
-            userDetails.getUserId(),
-            userDetails.getUsername(),
-            userDetails.getEmail(),
-            roles
-    ));
-}
+            return ResponseEntity.ok(new JwtResponse(
+                    jwt,
+                    "Bearer",
+                    userDetails.getUserId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    roles));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou mot de passe incorrect");
+        }
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody RegisterRequest request) {
-        UserDTO registeredUser = authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        return ResponseEntity.ok(authService.register(request));
     }
 
     @GetMapping("/test")
@@ -79,8 +73,3 @@ public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest authenticati
         return ResponseEntity.ok("you have access now");
     }
 }
-
-
-
-
-

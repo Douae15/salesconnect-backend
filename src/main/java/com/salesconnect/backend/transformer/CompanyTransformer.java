@@ -18,7 +18,9 @@ public class CompanyTransformer extends Transformer<Company, CompanyDTO>{
             Company company = new Company();
             company.setCompanyId(companyDTO.getCompanyId());
             company.setName(companyDTO.getName());
+            company.setCountry(companyDTO.getCountry());
             company.setEmail(companyDTO.getEmail());
+            company.setPhone(companyDTO.getPhone());
             company.setAddress(companyDTO.getAddress());
             company.setIndustry(companyDTO.getIndustry());
             company.setUsers(userTransformer.toEntityList(companyDTO.getUsersDTO()));
@@ -37,9 +39,10 @@ public class CompanyTransformer extends Transformer<Company, CompanyDTO>{
             CompanyDTO companyDTO = new CompanyDTO();
             companyDTO.setCompanyId(company.getCompanyId());
             companyDTO.setName(company.getName());
-            companyDTO.setEmail(company.getEmail());
+            companyDTO.setCountry(company.getCountry());
             companyDTO.setAddress(company.getAddress());
             companyDTO.setPhone(company.getPhone());
+            companyDTO.setEmail(company.getEmail());
             companyDTO.setIndustry(company.getIndustry());
             companyDTO.setUsersDTO(userTransformer.toDTOList(company.getUsers()));
             companyDTO.setContactsDTO(contactTransformer.toDTOList(company.getContacts()));

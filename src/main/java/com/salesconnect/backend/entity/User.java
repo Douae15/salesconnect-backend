@@ -26,8 +26,8 @@ public class User extends AbstractEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    private String username;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String email;
     private String phone;
     @Enumerated(EnumType.STRING)
