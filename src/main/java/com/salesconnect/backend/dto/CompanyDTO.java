@@ -16,13 +16,13 @@ import java.util.List;
 public class CompanyDTO {
 
     private Long companyId;
-    private String name;
-    private String email;
-    private String phone;
-    private String address;
-    private String industry;
-    private String country;
-    private List<UserDTO> usersDTO;
-    private List<ContactDTO> contactsDTO;
+    private String companyName;
+    private String companyEmail;
+    private String companyPhone;
+    private String companyAddress;
+    private String companyIndustry;
+    private String companyCountry;
+    private Long userId;
+    private Long contactId;
 
 }

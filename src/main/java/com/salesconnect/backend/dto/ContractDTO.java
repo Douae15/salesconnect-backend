@@ -20,7 +20,7 @@ public class ContractDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String contractTerm;
-    private OpportunityDTO opportunityDTO;
+    private Long opportunityId;
     private List<OrderDTO> ordersDTO;
 }
 

@@ -10,8 +10,6 @@ public interface CompanyService {
     List<CompanyDTO> getAllCompanies();
     CompanyDTO getCompanyById(Long id);
     CompanyDTO getCompanyForCompanyAdmin();
-
-    CompanyDTO registerCompany(CompanyDTO companyDTO);
     CompanyDTO updateCompany(Long id, CompanyDTO companyDTO);
     boolean deleteCompany(Long id);
 

@@ -2,10 +2,12 @@ package com.salesconnect.backend.service.impl;
 
 import com.salesconnect.backend.dto.ProductDTO;
 import com.salesconnect.backend.entity.Product;
+import com.salesconnect.backend.entity.User;
 import com.salesconnect.backend.repository.ProductRepository;
 import com.salesconnect.backend.service.ProductService;
 import com.salesconnect.backend.transformer.ProductTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,10 +34,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO addProduct(ProductDTO productDTO) {
+        User user = (User) SecurityContextHolder.getContext()
+            .getAuthentication().getPrincipal();
         if (productRepository.existsByName(productDTO.getName())) {
             throw new RuntimeException("Product with this name already exists.");
         }
         Product product = productTransformer.toEntity(productDTO);
+        product.setCompany(user.getCompany());
         return productTransformer.toDTO(productRepository.save(product));
     }
 

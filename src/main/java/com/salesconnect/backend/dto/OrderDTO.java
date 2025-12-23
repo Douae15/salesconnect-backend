@@ -18,8 +18,8 @@ public class OrderDTO {
     private String status;
     private LocalDateTime orderDate;
     private LocalDateTime deliveryDate;
-    private CompanyDTO companyDTO;
+    private Long companyId;
     private List<InvoiceDTO> invoicesDTO;
-    private ContractDTO contractDTO;
+    private Long contractId;
 }
 

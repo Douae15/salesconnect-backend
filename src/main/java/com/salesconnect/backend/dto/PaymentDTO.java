@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -14,8 +15,8 @@ public class PaymentDTO {
 
     private Long paymentNumber;
     private LocalDateTime paymentDate;
-    private double amount;
+    private BigDecimal amount;
     private String status;
     private String method;
-    private InvoiceDTO invoiceDTO;
+    private Long invoiceId;
 }

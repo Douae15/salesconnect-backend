@@ -1,7 +1,10 @@
 package com.salesconnect.backend.config;
 
+import com.salesconnect.backend.config.jwt.JwtAuthenticationEntryPoint;
 import com.salesconnect.backend.config.jwt.JwtTokenFilter;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +25,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final JwtTokenFilter jwtAuthenticationFilter;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     public SecurityConfig(JwtTokenFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -44,9 +50,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf(csrf -> csrf.disable())
                 .cors().and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((request, response, authException) -> response
-                                .sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getLocalizedMessage())))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorize -> authorize
                         // 🔓 Endpoints publics
                         .requestMatchers("/api/auth/**").permitAll() // Authentification
@@ -55,48 +59,21 @@ public class SecurityConfig implements WebMvcConfigurer {
                         // 🔒 Accès réservé à l'Admin Global
                         .requestMatchers("/api/admin/**", "/api/companies/all", "/api/companies/get/{id}")
                         .hasAuthority("ADMIN_GLOBAL")
-                        .requestMatchers("/api/users/all").hasAuthority("ADMIN_GLOBAL")
 
-                        // 🔒 Accès réservé à l'Admin
-                        // d’Entreprise.requestMatchers("/api/companies/my-company").hasAuthority("ADMIN_COMPANY")
-                        .requestMatchers(
-                                "/api/companies/**",
-                                "/api/users/create",
-                                "/api/users/getByCompany",
-                                "/api/users/delete/{id}",
-                                "/api/users/update/{id}",
-                                "/api/contacts/**")
-                        .hasAuthority("ADMIN_COMPANY")
+                        // 🔒 Admin d’entreprise : accès uniquement à sa propre entreprise
+                        .requestMatchers(HttpMethod.GET, "/api/companies/{companyId}").hasAuthority("ADMIN_COMPANY")
+                        .requestMatchers(HttpMethod.PUT, "/api/companies/{companyId}").hasAuthority("ADMIN_COMPANY")
 
-                        // 🔒 USER - Lecture
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/users/get/{id}",
-                                "/api/opportunities/**",
-                                "/api/products/**")
-                        .hasAnyAuthority("ADMIN_COMPANY", "USER")
+                        // 🔒 Accès réservé à l'Admin d’entreprise
+                        //.requestMatchers("/api/users/create").hasAuthority("ADMIN_COMPANY")
+                        .requestMatchers("/api/contacts/**").hasAuthority("ADMIN_COMPANY")
+                        .requestMatchers("/api/opportunities/**").hasAuthority("ADMIN_COMPANY")
+                        .requestMatchers("/api/products/**").hasAuthority("ADMIN_COMPANY")
 
-                        // 🔒 USER - Écriture
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/opportunities/**",
-                                "/api/products/**")
-                        .hasAuthority("USER")
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/opportunities/**",
-                                "/api/products/**")
-                        .hasAuthority("USER")
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/api/opportunities/**",
-                                "/api/products/**")
-                        .hasAuthority("USER")
+                        // Admin d’entreprise : gestion de son profil utilisateur
+                        .requestMatchers(HttpMethod.PUT, "/api/users/update/{id}").hasAuthority("ADMIN_COMPANY")
+                        .requestMatchers(HttpMethod.GET, "/api/users/get/{id}").hasAuthority("ADMIN_COMPANY")
 
-                        // 🔒 USER - Gestion de son propre profil
-                        .requestMatchers(
-                                "/api/users/update/{id}")
-                        .hasAuthority("USER")
                         // 🔐 Tout autre accès nécessite l'authentification
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -18,7 +18,7 @@ public class ContactDTO {
     private String email;
     private String phone;
     private String address;
-    private CompanyDTO companyDTO;
+    private Long companyId;
     private List<OpportunityDTO> opportunitiesDTO;
     private List<ActivityDTO> activitiesDTO;
 }

@@ -67,9 +67,8 @@ public class OpportunityServiceImpl implements OpportunityService {
     public OpportunityDTO updateOpportunity(Long id, OpportunityDTO opportunityDTO) {
         Optional<Opportunity> existingOpportunity = opportunityRepository.findById(id);
         if (existingOpportunity.isPresent()) {
-            Opportunity opportunity = opportunityTransformer.toEntity(opportunityDTO);
-            opportunity.setOpportunityId(id);
-            Opportunity updatedOpportunity = opportunityRepository.save(opportunity);
+            existingOpportunity.get().setOpportunityId(id);
+            Opportunity updatedOpportunity = opportunityRepository.save(existingOpportunity.get());
             return opportunityTransformer.toDTO(updatedOpportunity);
         }
         return null;

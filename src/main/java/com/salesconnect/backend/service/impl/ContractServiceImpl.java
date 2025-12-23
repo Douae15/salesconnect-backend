@@ -35,7 +35,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public ContractDTO addContract(ContractDTO contractDTO) {
-        Opportunity opportunity = opportunityRepository.findById(contractDTO.getOpportunityDTO().getOpportunityId())
+        Opportunity opportunity = opportunityRepository.findById(contractDTO.getOpportunityId())
                 .orElseThrow(() -> new RuntimeException("Opportunité non trouvée"));
 
         Contract contract = new Contract();

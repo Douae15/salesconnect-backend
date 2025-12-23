@@ -18,8 +18,20 @@ public class OrderTransformer extends Transformer<Order, OrderDTO>{
             order.setOrderDate(orderDTO.getOrderDate());
             order.setDeliveryDate(orderDTO.getDeliveryDate());
             order.setStatus(orderDTO.getStatus());
-            order.setCompany(companyTransformer.toEntity(orderDTO.getCompanyDTO()));
-            order.setContract(contractTransformer.toEntity(orderDTO.getContractDTO()));
+            if (orderDTO.getCompanyId() != null) {
+                Company company = new Company();
+                company.setCompanyId(orderDTO.getCompanyId());
+                order.setCompany(company);
+            } else {
+                order.setCompany(null);
+            }
+            if (orderDTO.getContractId() != null) {
+                Contract contract = new Contract();
+                contract.setContractId(orderDTO.getContractId());
+                order.setContract(contract);
+            } else {
+                order.setContract(null);
+            }
             order.setInvoices(invoicesTransformer.toEntityList(orderDTO.getInvoicesDTO()));
             return order;
         }
@@ -39,8 +51,8 @@ public class OrderTransformer extends Transformer<Order, OrderDTO>{
             orderDTO.setOrderDate(order.getOrderDate());
             orderDTO.setDeliveryDate(order.getDeliveryDate());
             orderDTO.setStatus(order.getStatus());
-            orderDTO.setCompanyDTO(companyTransformer.toDTO(order.getCompany()));
-            orderDTO.setContractDTO(contractTransformer.toDTO(order.getContract()));
+            orderDTO.setCompanyId(order.getCompany().getCompanyId());
+            orderDTO.setContractId(order.getContract().getContractId());
             orderDTO.setInvoicesDTO(invoicesTransformer.toDTOList(order.getInvoices()));
             return orderDTO;
         }

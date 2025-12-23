@@ -24,12 +24,12 @@ public class Product {
     private double price;
     private int quantity;
 
-    @ManyToMany(fetch=FetchType.LAZY)
-    @JoinTable(name = "opportunity_product",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "opportunity_id"))
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "opportunity_product", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "opportunity_id"))
     private Set<Opportunity> opportunities = new HashSet<>();
 
-
 }
-

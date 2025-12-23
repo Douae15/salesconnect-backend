@@ -18,7 +18,13 @@ public class ContractTransformer extends Transformer<Contract, ContractDTO>{
             contract.setContractTerm(contractDTO.getContractTerm());
             contract.setStartDate(contractDTO.getStartDate());
             contract.setEndDate(contractDTO.getEndDate());
-            contract.setOpportunity(opportunityTransformer.toEntity(contractDTO.getOpportunityDTO()));
+            if (contractDTO.getOpportunityId() != null) {
+                Opportunity opportunity = new Opportunity();
+                opportunity.setOpportunityId(contractDTO.getOpportunityId());
+                contract.setOpportunity(opportunity);
+            } else {
+                contract.setOpportunity(null);
+            }
             contract.setOrders(ordersTransformer.toEntityList(contractDTO.getOrdersDTO()));
             return contract;
         }
@@ -38,7 +44,7 @@ public class ContractTransformer extends Transformer<Contract, ContractDTO>{
             contractDTO.setContractTerm(contract.getContractTerm());
             contractDTO.setStartDate(contract.getStartDate());
             contractDTO.setEndDate(contract.getEndDate());
-            contractDTO.setOpportunityDTO(opportunityTransformer.toDTO(contract.getOpportunity()));
+            contractDTO.setOpportunityId(contract.getOpportunity().getOpportunityId());
             contractDTO.setOrdersDTO(ordersTransformer.toDTOList(contract.getOrders()));
             return contractDTO;
         }

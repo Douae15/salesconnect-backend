@@ -18,7 +18,7 @@ public class ActivityDTO {
     private String type;
     private String summary;
     private LocalDateTime date;
-    private UserDTO userDTO;
-    private ContactDTO contactDTO;
+    private Long userId;
+    private Long contactId;
 }
 

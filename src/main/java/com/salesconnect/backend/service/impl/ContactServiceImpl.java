@@ -42,14 +42,20 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
+    public List<ContactDTO> getContactsByCompany(Long companyId) {
+        List<Contact> contacts = contactRepository.findByCompanyCompanyId(companyId);
+        return contactTransformer.toDTOList(contacts);
+    }
+
+    @Override
     public ContactDTO addContact(ContactDTO contactDTO) {
         // Récupérer l'entreprise associée
-        Company company = companyRepository.findById(contactDTO.getCompanyDTO().getCompanyId())
+        Company company = companyRepository.findById(contactDTO.getCompanyId())
                 .orElseThrow(() -> new RuntimeException("Entreprise non trouvée"));
 
         // Transformer le DTO en entité
         Contact contact = contactTransformer.toEntity(contactDTO);
-        contact.setCompany(company);  // Associer l'entreprise
+        contact.setCompany(company); // Associer l'entreprise
 
         // Sauvegarder le contact
         Contact savedContact = contactRepository.save(contact);
@@ -62,9 +68,8 @@ public class ContactServiceImpl implements ContactService {
     public ContactDTO updateContact(Long id, ContactDTO contactDTO) {
         Optional<Contact> existingContact = contactRepository.findById(id);
         if (existingContact.isPresent()) {
-            Contact contact = contactTransformer.toEntity(contactDTO);
-            contact.setContactId(id);
-            Contact updatedContact = contactRepository.save(contact);
+            existingContact.get().setContactId(id);
+            Contact updatedContact = contactRepository.save(existingContact.get());
             return contactTransformer.toDTO(updatedContact);
         }
         return null;

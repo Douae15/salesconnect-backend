@@ -20,5 +20,5 @@ public class TaskDTO {
     private String type;
     private LocalDateTime dueDate;
     private String status;
-    private UserDTO userDTO;
+    private Long userId;
 }

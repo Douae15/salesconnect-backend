@@ -7,45 +7,59 @@ import com.salesconnect.backend.entity.Company;
 import com.salesconnect.backend.entity.Contact;
 import com.salesconnect.backend.entity.User;
 
-public class CompanyTransformer extends Transformer<Company, CompanyDTO>{
+public class CompanyTransformer extends Transformer<Company, CompanyDTO> {
     @Override
     public Company toEntity(CompanyDTO companyDTO) {
-        if (companyDTO==null)
+        if (companyDTO == null)
             return null;
-        else{
-            Transformer<User, UserDTO> userTransformer = new UserTransformer();
-            Transformer<Contact, ContactDTO> contactTransformer = new ContactTransformer();
+        else {
             Company company = new Company();
             company.setCompanyId(companyDTO.getCompanyId());
-            company.setName(companyDTO.getName());
-            company.setCountry(companyDTO.getCountry());
-            company.setEmail(companyDTO.getEmail());
-            company.setPhone(companyDTO.getPhone());
-            company.setAddress(companyDTO.getAddress());
-            company.setIndustry(companyDTO.getIndustry());
-            company.setUsers(userTransformer.toEntityList(companyDTO.getUsersDTO()));
-            company.setContacts(contactTransformer.toEntityList(companyDTO.getContactsDTO()));
+            company.setName(companyDTO.getCompanyName());
+            company.setCountry(companyDTO.getCompanyCountry());
+            company.setEmail(companyDTO.getCompanyEmail());
+            company.setPhone(companyDTO.getCompanyPhone());
+            company.setAddress(companyDTO.getCompanyAddress());
+            company.setIndustry(companyDTO.getCompanyIndustry());
+            if (companyDTO.getUserId() != null) {
+                User user = new User();
+                user.setUserId(companyDTO.getUserId());
+                company.getUsers().add(user);
+            } else {
+                company.setUsers(null);
+            }
+            if (companyDTO.getContactId() != null) {
+                Contact contact = new Contact();
+                contact.setContactId(companyDTO.getContactId());
+                company.getContacts().add(contact);
+            } else {
+                company.setContacts(null);
+            }
             return company;
         }
     }
 
     @Override
     public CompanyDTO toDTO(Company company) {
-        if (company==null)
+        if (company == null)
             return null;
-        else{
-            Transformer<User, UserDTO> userTransformer = new UserTransformer();
-            Transformer<Contact, ContactDTO> contactTransformer = new ContactTransformer();
+        else {
             CompanyDTO companyDTO = new CompanyDTO();
             companyDTO.setCompanyId(company.getCompanyId());
-            companyDTO.setName(company.getName());
-            companyDTO.setCountry(company.getCountry());
-            companyDTO.setAddress(company.getAddress());
-            companyDTO.setPhone(company.getPhone());
-            companyDTO.setEmail(company.getEmail());
-            companyDTO.setIndustry(company.getIndustry());
-            companyDTO.setUsersDTO(userTransformer.toDTOList(company.getUsers()));
-            companyDTO.setContactsDTO(contactTransformer.toDTOList(company.getContacts()));
+            companyDTO.setCompanyName(company.getName());
+            companyDTO.setCompanyCountry(company.getCountry());
+            companyDTO.setCompanyAddress(company.getAddress());
+            companyDTO.setCompanyPhone(company.getPhone());
+            companyDTO.setCompanyEmail(company.getEmail());
+            companyDTO.setCompanyIndustry(company.getIndustry());
+            if (company.getUsers() != null) {
+                companyDTO.setUserId(company.getUsers().get(0).getUserId());
+            }
+            if (company.getContacts() != null && !company.getContacts().isEmpty()) {
+                Contact contact = company.getContacts().get(0);
+                companyDTO.setContactId(contact.getContactId());
+            }
+
             return companyDTO;
         }
     }

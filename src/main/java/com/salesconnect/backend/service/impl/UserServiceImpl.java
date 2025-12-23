@@ -1,18 +1,15 @@
 package com.salesconnect.backend.service.impl;
 
 import com.salesconnect.backend.dto.UserDTO;
-import com.salesconnect.backend.entity.Company;
 import com.salesconnect.backend.entity.User;
 import com.salesconnect.backend.entity.enums.Role;
 import com.salesconnect.backend.repository.UserRepository;
 import com.salesconnect.backend.service.UserService;
-import com.salesconnect.backend.transformer.CompanyTransformer;
 import com.salesconnect.backend.transformer.UserTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    @Autowired
+      @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -33,7 +30,7 @@ public class UserServiceImpl implements UserService {
     private final UserTransformer userTransformer = new UserTransformer();
 
 
-    @Override
+   /*@Override
     public UserDTO createUser(UserDTO userDTO) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -49,11 +46,7 @@ public class UserServiceImpl implements UserService {
         if (admin == null || admin.getRole() != Role.ADMIN_COMPANY) {
             throw new RuntimeException("Unauthorized");
         }
-/*
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new RuntimeException("Email already in use!");
-        }
-*/
+
         User newUser = User.builder()
                 .firstName(userDTO.getFirstName())
                 .lastName(userDTO.getLastName())
@@ -67,7 +60,7 @@ public class UserServiceImpl implements UserService {
         newUser = userRepository.save(newUser);
 
         return userTransformer.toDTO(newUser);
-    }
+    }*/
 
     @Override
     public List<UserDTO> getAllUsers() {
@@ -111,12 +104,6 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
-    /*@Override
-    public UserDTO createUser(UserDTO userDTO) {
-        return null;
-    }*/
-
     @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         User existingUser = userRepository.findById(id)
@@ -140,7 +127,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
+  /* @Override
     public boolean deleteUser(Long id) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -148,5 +135,5 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(existingUser);
         return true; // Retourner true pour confirmer la suppression
     }
-
+*/
 }

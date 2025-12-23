@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.salesconnect.backend.entity.User;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -28,22 +30,45 @@ public class JwtTokenProvider {
     }
 
     public String createToken(Authentication authentication) {
+    User user = (User) authentication.getPrincipal();
+
+    Claims claims = Jwts.claims().setSubject(user.getEmail());
+    claims.put("role", user.getRole().name());
+    claims.put("companyId",
+            user.getCompany() != null ? user.getCompany().getCompanyId() : null
+    );
+
+    Date now = new Date();
+    Date validity = new Date(now.getTime() + 3600000);
+
+    return Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+            .compact();
+}
+
+
+    /*public String createToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         var authorities = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        User user = (User) userDetails; // CustomUser implements UserDetails
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 3600000); // 1 heure
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("authorities", authorities)
+                .claim("companyId", user.getCompany().getCompanyId())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
-    }
+    }*/
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

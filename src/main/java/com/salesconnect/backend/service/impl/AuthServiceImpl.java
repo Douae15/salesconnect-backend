@@ -1,6 +1,7 @@
 package com.salesconnect.backend.service.impl;
 
 import com.salesconnect.backend.config.jwt.JwtTokenProvider;
+import com.salesconnect.backend.config.request.LoginRequest;
 import com.salesconnect.backend.config.request.RegisterRequest;
 import com.salesconnect.backend.config.response.JwtResponse;
 import com.salesconnect.backend.dto.UserDTO;
@@ -15,11 +16,16 @@ import com.salesconnect.backend.transformer.UserTransformer;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -38,39 +44,76 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
 
     @Override
-public JwtResponse register(RegisterRequest request) {
-    // Créer l'entreprise
-    Company company = new Company();
-    company.setName(request.getCompanyName());
-    company.setAddress(request.getCompanyAddress());
-    company.setPhone(request.getCompanyPhone());
-    company.setEmail(request.getCompanyEmail());
-    company.setIndustry(request.getCompanyIndustry());
-    company.setCountry(request.getCompanyCountry());
-    Company savedCompany = companyRepository.save(company);
+    public JwtResponse login(LoginRequest authenticationRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getEmail(),
+                            authenticationRequest.getPassword()));
 
-    // Créer l'utilisateur Admin d'Entreprise
-    User user = new User();
-    user.setFirstName(request.getFirstName());
-    user.setLastName(request.getLastName());
-    user.setEmail(request.getEmail());
-    user.setPhone(request.getPhone());
-    user.setPassword(passwordEncoder.encode(request.getPassword()));
-    user.setRole(Role.ADMIN_COMPANY);
-    user.setCompany(savedCompany);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtTokenProvider.createToken(authentication);
 
-    User savedUser = userRepository.save(user);
+            User userDetails = (User) authentication.getPrincipal();
+            List<String> roles = authentication.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .toList();
 
-    // Authentifier l'utilisateur avec AuthenticationManager
-    Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            Long companyId = null;
+            if (userDetails.getRole() == Role.ADMIN_COMPANY && userDetails.getCompany() != null) {
+                companyId = userDetails.getCompany().getCompanyId();
+            }
 
-    // Générer un token JWT
-    String token = jwtTokenProvider.createToken(authentication);
+            return new JwtResponse(
+                    jwt,
+                    "Bearer",
+                    userDetails.getUserId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    roles,
+                    companyId);
+        } catch (Exception e) {
+        throw new BadCredentialsException("Email ou mot de passe incorrect");
+    }
+    }
 
-    // Retourner JwtResponse avec le token et email (tu peux ajouter plus d’infos si tu veux)
-    return new JwtResponse(token, "Bearer", savedUser.getUserId(), savedUser.getFirstName() + " " + savedUser.getLastName(), savedUser.getEmail(), List.of(user.getRole().name()));
-}
+    @Override
+    @Transactional
+    public JwtResponse register(RegisterRequest request) {
+        // Créer l'entreprise
+        Company company = new Company();
+        company.setName(request.getCompanyName());
+        company.setAddress(request.getCompanyAddress());
+        company.setPhone(request.getCompanyPhone());
+        company.setEmail(request.getCompanyEmail());
+        company.setIndustry(request.getCompanyIndustry());
+        company.setCountry(request.getCompanyCountry());
+        Company savedCompany = companyRepository.save(company);
 
+        // Créer l'utilisateur Admin d'Entreprise
+        User user = new User();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.ADMIN_COMPANY);
+        user.setCompany(savedCompany);
+
+        User savedUser = userRepository.save(user);
+
+        // Authentifier l'utilisateur avec AuthenticationManager
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        // Générer un token JWT
+        String token = jwtTokenProvider.createToken(authentication);
+
+        // Retourner JwtResponse avec le token et email (tu peux ajouter plus d’infos si
+        // tu veux)
+        return new JwtResponse(token, "Bearer", savedUser.getUserId(),
+                savedUser.getFirstName() + " " + savedUser.getLastName(), savedUser.getEmail(),
+                List.of(user.getRole().name()), savedUser.getCompany().getCompanyId());
+    }
 
 }

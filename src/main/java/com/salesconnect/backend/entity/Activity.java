@@ -29,5 +29,5 @@ public class Activity {
     @ManyToOne
     @JoinColumn(name = "contact_id")
     private Contact contact;
-}
 
+}

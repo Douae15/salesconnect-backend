@@ -44,13 +44,6 @@ public class CompanyController {
         return ResponseEntity.ok(companyDTO);
     }
 
-
-    @PostMapping(path = "/create")
-    public ResponseEntity<CompanyDTO> registerCompany(@RequestBody CompanyDTO companyDTO) {
-        CompanyDTO createdCompany = companyService.registerCompany(companyDTO);
-        return ResponseEntity.ok(createdCompany);
-    }
-
     @PutMapping("/update/{id}")
     public ResponseEntity<CompanyDTO> updateCompany(@PathVariable Long id, @RequestBody CompanyDTO companyDTO) {
         CompanyDTO updatedCompany = companyService.updateCompany(id, companyDTO);

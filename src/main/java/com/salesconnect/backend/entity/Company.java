@@ -1,5 +1,6 @@
 package com.salesconnect.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.salesconnect.backend.entity.abstractEntity.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,10 +30,16 @@ public class Company extends AbstractEntity {
     private String industry;
     private String country;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<User> users;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Contact> contacts;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Product> products;
 
 }

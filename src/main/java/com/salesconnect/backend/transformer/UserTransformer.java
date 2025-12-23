@@ -11,7 +11,6 @@ public class UserTransformer extends Transformer<User, UserDTO>{
         if (userDTO == null)
             return null;
         else {
-            Transformer<Company, CompanyDTO> companyTransformer = new CompanyTransformer();
             Transformer<Activity, ActivityDTO> activityTransformer = new ActivityTransformer();
             Transformer<Task, TaskDTO> tasksTransformer = new TaskTransformer();
             User user = new User();
@@ -21,8 +20,14 @@ public class UserTransformer extends Transformer<User, UserDTO>{
             user.setEmail(userDTO.getEmail());
             user.setPhone(userDTO.getPhone());
             user.setRole(userDTO.getRole());
-            userDTO.setPassword(userDTO.getPassword());
-            //user.setCompany(companyTransformer.toEntity(userDTO.getCompanyDTO()));
+            user.setPassword(userDTO.getPassword());
+            if (userDTO.getCompanyId() != null) {
+                Company company = new Company();
+                company.setCompanyId(userDTO.getCompanyId());
+                user.setCompany(company);
+            } else {
+                user.setCompany(null);
+            }
             user.setActivities(activityTransformer.toEntityList(userDTO.getActivitiesDTO()));
             user.setTasks(tasksTransformer.toEntityList(userDTO.getTasksDTO()));
             return user;
@@ -34,17 +39,19 @@ public class UserTransformer extends Transformer<User, UserDTO>{
         if (user == null)
             return null;
         else {
-            Transformer<Company, CompanyDTO> companyTransformer = new CompanyTransformer();
             Transformer<Activity, ActivityDTO> activityTransformer = new ActivityTransformer();
             Transformer<Task, TaskDTO> tasksTransformer = new TaskTransformer();
             UserDTO userDTO = new UserDTO();
             userDTO.setUserId(user.getUserId());
-            userDTO.setFirstName(user.getLastName());
+            userDTO.setFirstName(user.getFirstName());
+            userDTO.setLastName(user.getLastName());
             userDTO.setEmail(user.getEmail());
             userDTO.setPhone(user.getPhone());
             userDTO.setRole(user.getRole());
             userDTO.setPassword(user.getPassword());
-            //userDTO.setCompanyDTO(companyTransformer.toDTO(user.getCompany()));
+            if (user.getCompany() != null) {
+                userDTO.setCompanyId(user.getCompany().getCompanyId());
+            }
             userDTO.setActivitiesDTO(activityTransformer.toDTOList(user.getActivities()));
             userDTO.setTasksDTO(tasksTransformer.toDTOList(user.getTasks()));
             return userDTO;

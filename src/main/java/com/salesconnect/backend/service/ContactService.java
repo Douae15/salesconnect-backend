@@ -10,6 +10,7 @@ import java.util.List;
 public interface ContactService {
     List<ContactDTO> getAllContacts();
     ContactDTO getContactById(Long id);
+    List<ContactDTO> getContactsByCompany(Long companyId);
     ContactDTO addContact(ContactDTO contactDTO);
     ContactDTO updateContact(Long id, ContactDTO contactDTO);
     boolean deleteContact(Long id);

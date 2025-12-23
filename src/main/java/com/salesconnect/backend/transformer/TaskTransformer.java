@@ -15,7 +15,6 @@ public class TaskTransformer extends Transformer<Task, TaskDTO> {
         if (taskDTO == null)
             return null;
         else {
-            Transformer<User, UserDTO> userTransformer = new UserTransformer();
             Task task = new Task();
             task.setTaskId(taskDTO.getTaskId());
             task.setType(taskDTO.getType());
@@ -23,7 +22,13 @@ public class TaskTransformer extends Transformer<Task, TaskDTO> {
             task.setDescription(taskDTO.getDescription());
             task.setStatus(taskDTO.getStatus());
             task.setDueDate(taskDTO.getDueDate());
-            task.setUser(userTransformer.toEntity(taskDTO.getUserDTO()));
+            if (taskDTO.getUserId() != null) {
+                User user = new User();
+                user.setUserId(taskDTO.getUserId());
+                task.setUser(user);
+            } else {
+                task.setUser(null);
+            }
             return task;
         }
     }
@@ -33,7 +38,6 @@ public class TaskTransformer extends Transformer<Task, TaskDTO> {
         if (task == null)
             return null;
         else {
-            Transformer<User, UserDTO> userTransformer = new UserTransformer();
             TaskDTO taskDTO = new TaskDTO();
             taskDTO.setTaskId(task.getTaskId());
             taskDTO.setType(task.getType());
@@ -41,7 +45,7 @@ public class TaskTransformer extends Transformer<Task, TaskDTO> {
             taskDTO.setDescription(task.getDescription());
             taskDTO.setStatus(task.getStatus());
             taskDTO.setDueDate(task.getDueDate());
-            taskDTO.setUserDTO(userTransformer.toDTO(task.getUser()));
+            taskDTO.setUserId(task.getUser().getUserId());
             return taskDTO;
         }
     }

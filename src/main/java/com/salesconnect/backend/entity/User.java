@@ -34,7 +34,7 @@ public class User extends AbstractEntity implements UserDetails {
     private Role role;
     private String password;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 

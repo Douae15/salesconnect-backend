@@ -17,10 +17,10 @@ public class ContactTransformer extends Transformer<Contact, ContactDTO>{
             contact.setEmail(contactDTO.getEmail());
             contact.setAddress(contactDTO.getAddress());
             contact.setPhone(contactDTO.getPhone());
-            if (contactDTO.getCompanyDTO() != null) {
+            if (contactDTO.getCompanyId() != null) {
                 Company company = new Company();
-                company.setCompanyId(contactDTO.getCompanyDTO().getCompanyId());
-                company.setName(contactDTO.getCompanyDTO().getName());
+                company.setCompanyId(contactDTO.getCompanyId());
+                company.setName(contactDTO.getName());
                 contact.setCompany(company);
             }
             contact.setActivities(activityTransformer.toEntityList(contactDTO.getActivitiesDTO()));
@@ -46,8 +46,8 @@ public class ContactTransformer extends Transformer<Contact, ContactDTO>{
             if (contact.getCompany() != null) {
                 CompanyDTO companyDTO = new CompanyDTO();
                 companyDTO.setCompanyId(contact.getCompany().getCompanyId());
-                companyDTO.setName(contact.getCompany().getName());
-                contactDTO.setCompanyDTO(companyDTO);
+                companyDTO.setCompanyName(contact.getCompany().getName());
+                contactDTO.setCompanyId(companyDTO.getCompanyId());
             }
             contactDTO.setActivitiesDTO(activityTransformer.toDTOList(contact.getActivities()));
             contactDTO.setOpportunitiesDTO(opportunityTransformer.toDTOList(contact.getOpportunities()));

@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
-        return user; // retourne ton User qui implémente UserDetails
+        return user; 
     }
 
 }

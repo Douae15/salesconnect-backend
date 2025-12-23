@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,8 +51,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
                 if (userDetails == null) {
                     log.warn("UserDetails not found for username: " + username);
-                    // You can also handle the response here if needed, like returning 401
-                    // Unauthorized.
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
@@ -65,8 +65,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 log.debug("Authentication set for user: " + username);
             } else {
                 log.warn("Invalid or expired JWT token.");
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+                throw new BadCredentialsException("Invalid JWT token");
             }
         } else {
             log.debug("No token found in request.");

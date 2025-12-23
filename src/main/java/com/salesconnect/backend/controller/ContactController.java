@@ -35,6 +35,12 @@ public class ContactController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<List<ContactDTO>> getContactsByCompany(@PathVariable Long companyId) {
+        List<ContactDTO> contacts = contactService.getContactsByCompany(companyId);
+        return ResponseEntity.ok(contacts);
+    }
+
     @PostMapping(path = "/create")
     public ResponseEntity<ContactDTO> addContact(@RequestBody ContactDTO contactDTO) {
         ContactDTO createdContact = contactService.addContact(contactDTO);

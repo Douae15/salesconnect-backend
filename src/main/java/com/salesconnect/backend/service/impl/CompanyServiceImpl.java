@@ -38,6 +38,7 @@ public class CompanyServiceImpl implements CompanyService {
         List<Company> companies = companyRepository.findAll();
         return companyTransformer.toDTOList(companies);
     }
+
     @Override
     public CompanyDTO getCompanyById(Long id) {
         Optional<Company> company = companyRepository.findById(id);
@@ -63,66 +64,32 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public CompanyDTO registerCompany(CompanyDTO companyDTO) {
-        // Créer l'entité Company
-        Company company = Company.builder()
-                .name(companyDTO.getName())
-                .country(companyDTO.getCountry())
-                .address(companyDTO.getAddress())
-                .email(companyDTO.getEmail())
-                .phone(companyDTO.getPhone())
-                .industry(companyDTO.getIndustry())
-                .country(companyDTO.getCountry())
-                .build();
-
-        // Sauvegarder l'entreprise
-        company = companyRepository.save(company);
-
-        // Créer l'admin de l'entreprise
-        // On prend les données de l'admin depuis le UserDTO, et on encode le mot de passe
-        UserDTO adminDTO = companyDTO.getUsersDTO().stream()
-                .filter(user -> user.getRole() == Role.ADMIN_COMPANY)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Admin user is missing"));
-
-        User admin = User.builder()
-                .firstName(adminDTO.getFirstName())
-                .lastName(adminDTO.getLastName())
-                .email(adminDTO.getEmail())
-                .phone(adminDTO.getPhone())
-                .password(passwordEncoder.encode(adminDTO.getPassword())) // Encodage du mot de passe
-                .role(Role.ADMIN_COMPANY) // Rôle Admin d'entreprise
-                .company(company) // Associer l'admin à l'entreprise
-                .build();
-
-        // Sauvegarder l'admin
-        userRepository.save(admin);
-
-        // Mapper l'entité Company vers DTO pour la réponse
-        CompanyDTO response = CompanyDTO.builder()
-                .companyId(company.getCompanyId())
-                .name(company.getName())
-                .country(company.getCountry())
-                .address(company.getAddress())
-                .email(company.getEmail())
-                .phone(company.getPhone())
-                .industry(company.getIndustry())
-                .build();
-
-        return response;
-    }
-
-
-    @Override
     public CompanyDTO updateCompany(Long id, CompanyDTO companyDTO) {
-        Optional<Company> existingCompany = companyRepository.findById(id);
-        if (existingCompany.isPresent()) {
-            Company company = companyTransformer.toEntity(companyDTO);
-            company.setCompanyId(id);
-            Company updatedCompany = companyRepository.save(company);
-            return companyTransformer.toDTO(updatedCompany);
+
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+
+        if (companyDTO.getCompanyName() != null) {
+            company.setName(companyDTO.getCompanyName());
         }
-        return null;
+        if (companyDTO.getCompanyEmail() != null) {
+            company.setEmail(companyDTO.getCompanyEmail());
+        }
+        if (companyDTO.getCompanyPhone() != null) {
+            company.setPhone(companyDTO.getCompanyPhone());
+        }
+        if (companyDTO.getCompanyAddress() != null) {
+            company.setAddress(companyDTO.getCompanyAddress());
+        }
+        if (companyDTO.getCompanyIndustry() != null) {
+            company.setIndustry(companyDTO.getCompanyIndustry());
+        }
+        if (companyDTO.getCompanyCountry() != null) {
+            company.setCountry(companyDTO.getCompanyCountry());
+        }
+
+        Company updatedCompany = companyRepository.save(company);
+        return companyTransformer.toDTO(updatedCompany);
     }
 
     @Override

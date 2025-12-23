@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +20,8 @@ public class Invoice {
     private Long documentNumber;
 
     private String invoiceNumber;
-    private double amount;
+    @Column(precision = 15, scale = 2)
+    private BigDecimal amount;
     private LocalDateTime dueDate;
     private String status;
 
@@ -29,4 +32,3 @@ public class Invoice {
     @OneToMany(mappedBy = "invoice")
     private List<Payment> payments;
 }
-

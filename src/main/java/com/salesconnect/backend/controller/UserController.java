@@ -23,14 +23,14 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    @Autowired
+   @Autowired
     private UserService userService;
 
-    @PostMapping("/create")
+    /*@PostMapping("/create")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         UserDTO createdUser = userService.createUser(userDTO);
         return ResponseEntity.ok(createdUser);
-    }
+    }*/
 
     @GetMapping(path = "/all")
     public ResponseEntity<List<UserDTO>> getUserList() {
@@ -70,9 +70,10 @@ public class UserController {
     }
 
     // Supprimer un utilisateur
-    @DeleteMapping("/delete/{id}")
+   /* @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         boolean isDeleted = userService.deleteUser(id);
         return isDeleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-    }
+    } */
+    
 }
